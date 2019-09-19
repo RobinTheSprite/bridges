@@ -11,6 +11,6 @@ using Bridge = std::vector<int>;
 
 std::vector<std::vector<Bridge>> subsets(const std::vector<Bridge> &set);
 
-int build(const std::vector<Bridge> &bridges);
+int build(int westCities, int eastCities, const std::vector<Bridge> &bridges);
 
 #endif //BRIDGES_BUILD_H

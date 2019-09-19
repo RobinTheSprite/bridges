@@ -5,4 +5,10 @@
 #ifndef BRIDGES_BUILD_H
 #define BRIDGES_BUILD_H
 
+#include <vector>
+
+using Bridge = std::vector<int>;
+
+std::vector<std::vector<Bridge>> subsets(const std::vector<Bridge> &set);
+
 #endif //BRIDGES_BUILD_H

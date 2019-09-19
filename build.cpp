@@ -34,7 +34,8 @@ vector<vector<Bridge>> subsets(const vector<Bridge> &set)
 
 bool bridgesCross(const vector<Bridge>& bridgeSubset)
 {
-    return bridgeSubset[0][0] < bridgeSubset[1][0] && bridgeSubset[0][1] > bridgeSubset[1][1];
+    return (bridgeSubset[0][0] < bridgeSubset[1][0] && bridgeSubset[0][1] > bridgeSubset[1][1]) ||
+            (bridgeSubset[0][0] > bridgeSubset[1][0] && bridgeSubset[0][1] < bridgeSubset[1][1]);
 }
 
 int build(int westCities, int eastCities, const vector<Bridge> &bridges)

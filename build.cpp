@@ -41,8 +41,11 @@ bool containsCrossedBridges(const set<std::pair<Bridge, Bridge>>& crossedBridges
 {
     for (const auto& bridgePair : crossedBridges)
     {
-        return std::count(bridgeSubset.begin(), bridgeSubset.end(), bridgePair.first) > 0 &&
-               std::count(bridgeSubset.begin(), bridgeSubset.end(), bridgePair.second) > 0;
+        if (std::count(bridgeSubset.begin(), bridgeSubset.end(), bridgePair.first) > 0 &&
+            std::count(bridgeSubset.begin(), bridgeSubset.end(), bridgePair.second) > 0)
+        {
+            return true;
+        }
     }
 
     return false;

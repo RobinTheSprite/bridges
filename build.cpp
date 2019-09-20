@@ -3,13 +3,12 @@
 //
 
 #include "build.h"
-
 #include <vector>
-using std::vector;
 #include <set>
-using std::set;
 #include <algorithm>
 #include <iostream>
+using std::vector;
+using std::set;
 
 vector<vector<Bridge>> subsets(const vector<Bridge> &set)
 {

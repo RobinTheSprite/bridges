@@ -10,6 +10,12 @@
 using std::vector;
 using std::set;
 
+bool bridgesCross(const vector<Bridge>& bridgeSubset)
+{
+    return (bridgeSubset[0][0] < bridgeSubset[1][0] && bridgeSubset[0][1] > bridgeSubset[1][1]) ||
+           (bridgeSubset[0][0] > bridgeSubset[1][0] && bridgeSubset[0][1] < bridgeSubset[1][1]);
+}
+
 vector<vector<Bridge>> subsets(const vector<Bridge> &set)
 {
     vector<Bridge> subset;
@@ -24,6 +30,7 @@ vector<vector<Bridge>> subsets(const vector<Bridge> &set)
                 subset.push_back(set[i]);
             }
         }
+
         powerSet.push_back(subset);
         subset.clear();
     }
@@ -31,13 +38,8 @@ vector<vector<Bridge>> subsets(const vector<Bridge> &set)
     return powerSet;
 }
 
-bool bridgesCross(const vector<Bridge>& bridgeSubset)
-{
-    return (bridgeSubset[0][0] < bridgeSubset[1][0] && bridgeSubset[0][1] > bridgeSubset[1][1]) ||
-            (bridgeSubset[0][0] > bridgeSubset[1][0] && bridgeSubset[0][1] < bridgeSubset[1][1]);
-}
-
-bool containsCrossedBridges(const set<std::pair<Bridge, Bridge>>& crossedBridges, const vector<Bridge>&bridgeSubset)
+bool subsetContainsCrossedBridges(const set<std::pair<Bridge, Bridge>> &crossedBridges,
+                                  const vector<Bridge> &bridgeSubset)
 {
     for (const auto& bridgePair : crossedBridges)
     {
@@ -72,7 +74,7 @@ int build(int westCities, int eastCities, const vector<Bridge> &bridges)
             }
         }
 
-        if(containsCrossedBridges(crossedBridges, bridgeSubset))
+        if(subsetContainsCrossedBridges(crossedBridges, bridgeSubset))
         {
             continue;
         }

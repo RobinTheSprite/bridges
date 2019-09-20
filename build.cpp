@@ -37,17 +37,6 @@ bool bridgesCross(const vector<Bridge>& bridgeSubset)
             (bridgeSubset[0][0] > bridgeSubset[1][0] && bridgeSubset[0][1] < bridgeSubset[1][1]);
 }
 
-bool containsCrossedBridges(const set<std::pair<Bridge, Bridge>>& crossedBridges, const vector<Bridge>&bridgeSubset)
-{
-    for (const auto& bridgePair : crossedBridges)
-    {
-        return std::count(bridgeSubset.begin(), bridgeSubset.end(), bridgePair.first) > 0 &&
-               std::count(bridgeSubset.begin(), bridgeSubset.end(), bridgePair.second) > 0;
-    }
-
-    return false;
-}
-
 int build(int westCities, int eastCities, const vector<Bridge> &bridges)
 {
     auto maxToll = 0;
@@ -69,7 +58,18 @@ int build(int westCities, int eastCities, const vector<Bridge> &bridges)
             }
         }
 
-        if(containsCrossedBridges(crossedBridges, bridgeSubset))
+        bool containsCrossedBridges = false;
+        for (const auto& bridgePair : crossedBridges)
+        {
+            containsCrossedBridges = std::count(bridgeSubset.begin(), bridgeSubset.end(), bridgePair.first) > 0 &&
+                                     std::count(bridgeSubset.begin(), bridgeSubset.end(), bridgePair.second) > 0;
+            if (containsCrossedBridges)
+            {
+                break;
+            }
+        }
+
+        if(containsCrossedBridges)
         {
             continue;
         }

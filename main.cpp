@@ -16,6 +16,7 @@
 #include <iostream>     // for std::cout, std::endl, std::cin
 #include <string>       // for std::string
 #include <stdexcept>    // for std::runtime_error
+#include <chrono>
 
 // Additional includes for this test program
 #include <vector>       // for std::vector
@@ -50,7 +51,7 @@ class Tester {
     // Post:
     //     numTests == 0, countPasses == 0, tolerance_ == abs(theTolerance)
     // Does not throw (No-Throw Guarantee)
-    Tester(double theTolerance = 0.0000001)
+    explicit Tester(double theTolerance = 0.0000001)
             :countTests_(0),
              countPasses_(0),
              tolerance_(theTolerance >= 0 ? theTolerance : -theTolerance)
@@ -987,6 +988,7 @@ void test_build(Tester & t)
 // Runs function build test suite, prints results to cout.
 int main()
 {
+    auto start = std::chrono::high_resolution_clock::now();
     Tester t;
     test_build(t);
 
@@ -1002,6 +1004,10 @@ int main()
                   << std::endl;
     }
     std::cout << std::endl;
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> diff = end-start;
+    std::cout << diff.count() << std::endl;
 
     return 0;
 }

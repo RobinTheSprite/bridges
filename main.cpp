@@ -1005,6 +1005,11 @@ int main()
     }
     std::cout << std::endl;
 
+//    if (build(3,3,std::vector<Bridge>{{0,1,3},{1,1,5},{1,2,4},{2,0,8},{2,2,6}}) == 11)
+//    {
+//        std::cout << "It worked!" << std::endl;
+//    }
+
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> diff = end-start;
     std::cout << diff.count() << std::endl;

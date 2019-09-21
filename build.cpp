@@ -14,35 +14,13 @@ bool bridgesCross(const vector<Bridge>& bridgeSubset)
            (bridgeSubset[0][0] > bridgeSubset[1][0] && bridgeSubset[0][1] < bridgeSubset[1][1]);
 }
 
-vector<vector<Bridge>> subsets(const vector<Bridge> &set)
-{
-    vector<Bridge> subset;
-    vector<vector<Bridge>> powerSet;
-
-    for (auto subsetId = 0u; subsetId < 1u << set.size(); ++subsetId)
-    {
-        for (auto i = 0u; i < set.size(); ++i)
-        {
-            if((subsetId & (1u << i)) == (1u << i))
-            {
-                subset.push_back(set[i]);
-            }
-        }
-
-        powerSet.push_back(subset);
-        subset.clear();
-    }
-
-    return powerSet;
-}
-
 bool subsetContainsCrossedBridges(const vector<std::pair<Bridge, Bridge>> &crossedBridges,
-                                  const vector<Bridge> &bridgeSubset)
+                                  const vector<Bridge> &subset)
 {
     for (const auto& crossedPair : crossedBridges)
     {
-        if (std::find(bridgeSubset.begin(), bridgeSubset.end(), crossedPair.first) != bridgeSubset.end() &&
-            std::find(bridgeSubset.begin(), bridgeSubset.end(), crossedPair.second) != bridgeSubset.end())
+        if (std::find(subset.begin(), subset.end(), crossedPair.first) != subset.end() &&
+            std::find(subset.begin(), subset.end(), crossedPair.second) != subset.end())
         {
             return true;
         }
@@ -55,29 +33,38 @@ int build(int westCities, int eastCities, const vector<Bridge> &bridges)
 {
     auto maxToll = 0;
     vector<std::pair<Bridge, Bridge>> crossedBridges;
+    vector<Bridge> currentSubset;
 
-    auto bridgeSubsets = subsets(bridges);
-
-    for (const auto& bridgeSubset : bridgeSubsets)
+    for (auto nthSubset = 0u; nthSubset < 1u << bridges.size(); ++nthSubset)
     {
-        if(bridgeSubset.size() == 2)
+        for (auto i = 0u; i < bridges.size(); ++i)
         {
-            if(bridgesCross(bridgeSubset))
+            if((nthSubset & (1u << i)) == (1u << i))
             {
-                crossedBridges.emplace_back(bridgeSubset[0], bridgeSubset[1]);
+                currentSubset.push_back(bridges[i]);
+            }
+        }
+
+        if(currentSubset.size() == 2)
+        {
+            if(bridgesCross(currentSubset))
+            {
+                crossedBridges.emplace_back(currentSubset[0], currentSubset[1]);
+                currentSubset.clear();
                 continue;
             }
         }
 
-        if(subsetContainsCrossedBridges(crossedBridges, bridgeSubset))
+        if(subsetContainsCrossedBridges(crossedBridges, currentSubset))
         {
+            currentSubset.clear();
             continue;
         }
 
         auto sumOfTolls = 0;
         vector<int> visitedCitiesWest(westCities, 0);
         vector<int> visitedCitiesEast(eastCities, 0);
-        for (auto bridge : bridgeSubset)
+        for (auto bridge : currentSubset)
         {
             if (visitedCitiesWest[bridge[0]] == 1 || visitedCitiesEast[bridge[1]] == 1)
             {
@@ -93,6 +80,8 @@ int build(int westCities, int eastCities, const vector<Bridge> &bridges)
         {
             maxToll = sumOfTolls;
         }
+
+        currentSubset.clear();
     }
 
     return maxToll;

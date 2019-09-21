@@ -8,10 +8,10 @@
 #include <iostream>
 using std::vector;
 
-bool bridgesCross(const vector<Bridge>& bridgeSubset)
+bool bridgesCross(const vector<Bridge>& subset)
 {
-    return (bridgeSubset[0][0] < bridgeSubset[1][0] && bridgeSubset[0][1] > bridgeSubset[1][1]) ||
-           (bridgeSubset[0][0] > bridgeSubset[1][0] && bridgeSubset[0][1] < bridgeSubset[1][1]);
+    return (subset[0][0] < subset[1][0] && subset[0][1] > subset[1][1]) ||
+           (subset[0][0] > subset[1][0] && subset[0][1] < subset[1][1]);
 }
 
 bool subsetContainsCrossedBridges(const vector<std::pair<Bridge, Bridge>> &crossedBridges,

@@ -71,6 +71,7 @@ int build(int westCities, int eastCities, const vector<Bridge> &bridges)
             if(bridgesCross(bridgeSubset))
             {
                 crossedBridges.insert(std::make_pair(bridgeSubset[0], bridgeSubset[1]));
+                continue;
             }
         }
 

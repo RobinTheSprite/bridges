@@ -4,11 +4,9 @@
 
 #include "build.h"
 #include <vector>
-#include <set>
 #include <algorithm>
 #include <iostream>
 using std::vector;
-using std::set;
 
 bool bridgesCross(const vector<Bridge>& bridgeSubset)
 {
@@ -38,7 +36,7 @@ vector<vector<Bridge>> subsets(const vector<Bridge> &set)
     return powerSet;
 }
 
-bool subsetContainsCrossedBridges(const set<std::pair<Bridge, Bridge>> &crossedBridges,
+bool subsetContainsCrossedBridges(const vector<std::pair<Bridge, Bridge>> &crossedBridges,
                                   const vector<Bridge> &bridgeSubset)
 {
     for (const auto& crossedPair : crossedBridges)
@@ -56,7 +54,7 @@ bool subsetContainsCrossedBridges(const set<std::pair<Bridge, Bridge>> &crossedB
 int build(int westCities, int eastCities, const vector<Bridge> &bridges)
 {
     auto maxToll = 0;
-    set<std::pair<Bridge, Bridge>> crossedBridges;
+    vector<std::pair<Bridge, Bridge>> crossedBridges;
 
     auto bridgeSubsets = subsets(bridges);
 
@@ -66,7 +64,7 @@ int build(int westCities, int eastCities, const vector<Bridge> &bridges)
         {
             if(bridgesCross(bridgeSubset))
             {
-                crossedBridges.insert(std::make_pair(bridgeSubset[0], bridgeSubset[1]));
+                crossedBridges.emplace_back(bridgeSubset[0], bridgeSubset[1]);
                 continue;
             }
         }
@@ -77,17 +75,17 @@ int build(int westCities, int eastCities, const vector<Bridge> &bridges)
         }
 
         auto sumOfTolls = 0;
-        set<int> visitedCitiesWest;
-        set<int> visitedCitiesEast;
+        vector<int> visitedCitiesWest(westCities, 0);
+        vector<int> visitedCitiesEast(eastCities, 0);
         for (auto bridge : bridgeSubset)
         {
-            if (visitedCitiesWest.count(bridge[0]) > 0 || visitedCitiesEast.count(bridge[1]) > 0)
+            if (visitedCitiesWest[bridge[0]] == 1 || visitedCitiesEast[bridge[1]] == 1)
             {
                 break;
             }
 
-            visitedCitiesWest.insert(bridge[0]);
-            visitedCitiesEast.insert(bridge[1]);
+            visitedCitiesWest[bridge[0]] = 1;
+            visitedCitiesEast[bridge[1]] = 1;
             sumOfTolls += bridge[2];
         }
 

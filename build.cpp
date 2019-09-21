@@ -41,10 +41,10 @@ vector<vector<Bridge>> subsets(const vector<Bridge> &set)
 bool subsetContainsCrossedBridges(const set<std::pair<Bridge, Bridge>> &crossedBridges,
                                   const vector<Bridge> &bridgeSubset)
 {
-    for (const auto& bridgePair : crossedBridges)
+    for (const auto& crossedPair : crossedBridges)
     {
-        if (std::count(bridgeSubset.begin(), bridgeSubset.end(), bridgePair.first) > 0 &&
-            std::count(bridgeSubset.begin(), bridgeSubset.end(), bridgePair.second) > 0)
+        if (std::find(bridgeSubset.begin(), bridgeSubset.end(), crossedPair.first) != bridgeSubset.end() &&
+            std::find(bridgeSubset.begin(), bridgeSubset.end(), crossedPair.second) != bridgeSubset.end())
         {
             return true;
         }
@@ -62,10 +62,6 @@ int build(int westCities, int eastCities, const vector<Bridge> &bridges)
 
     for (const auto& bridgeSubset : bridgeSubsets)
     {
-        auto sumOfTolls = 0;
-        set<int> visitedCitiesWest;
-        set<int> visitedCitiesEast;
-
         if(bridgeSubset.size() == 2)
         {
             if(bridgesCross(bridgeSubset))
@@ -80,6 +76,9 @@ int build(int westCities, int eastCities, const vector<Bridge> &bridges)
             continue;
         }
 
+        auto sumOfTolls = 0;
+        set<int> visitedCitiesWest;
+        set<int> visitedCitiesEast;
         for (auto bridge : bridgeSubset)
         {
             if (visitedCitiesWest.count(bridge[0]) > 0 || visitedCitiesEast.count(bridge[1]) > 0)

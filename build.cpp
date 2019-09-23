@@ -10,8 +10,8 @@ using std::vector;
 
 bool bridgesCross(const vector<Bridge>& subset)
 {
-    return (subset[0][0] < subset[1][0] && subset[0][1] > subset[1][1]) ||
-           (subset[0][0] > subset[1][0] && subset[0][1] < subset[1][1]);
+    return (subset[0][0] <= subset[1][0] && subset[0][1] >= subset[1][1]) ||
+           (subset[0][0] >= subset[1][0] && subset[0][1] <= subset[1][1]);
 }
 
 bool subsetContainsCrossedBridges(const vector<std::pair<Bridge, Bridge>> &crossedBridges,
@@ -37,6 +37,7 @@ int build(int westCities, int eastCities, const vector<Bridge> &bridges)
 
     for (auto nthSubset = 0u; nthSubset < 1u << bridges.size(); ++nthSubset)
     {
+        currentSubset.clear();
         for (auto i = 0u; i < bridges.size(); ++i)
         {
             if((nthSubset & (1u << i)) == (1u << i))
@@ -50,14 +51,12 @@ int build(int westCities, int eastCities, const vector<Bridge> &bridges)
             if(bridgesCross(currentSubset))
             {
                 crossedBridges.emplace_back(currentSubset[0], currentSubset[1]);
-                currentSubset.clear();
                 continue;
             }
         }
 
         if(subsetContainsCrossedBridges(crossedBridges, currentSubset))
         {
-            currentSubset.clear();
             continue;
         }
 
@@ -80,8 +79,6 @@ int build(int westCities, int eastCities, const vector<Bridge> &bridges)
         {
             maxToll = sumOfTolls;
         }
-
-        currentSubset.clear();
     }
 
     return maxToll;

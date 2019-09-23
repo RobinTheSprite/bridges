@@ -8,21 +8,17 @@
 #include <iostream>
 using std::vector;
 
-bool bridgesCross(const vector<Bridge>& subset)
+bool subsetContainsCrossedBridges(const vector<Bridge> &subset)
 {
-    return (subset[0][0] <= subset[1][0] && subset[0][1] >= subset[1][1]) ||
-           (subset[0][0] >= subset[1][0] && subset[0][1] <= subset[1][1]);
-}
-
-bool subsetContainsCrossedBridges(const vector<std::pair<Bridge, Bridge>> &crossedBridges,
-                                  const vector<Bridge> &subset)
-{
-    for (const auto& crossedPair : crossedBridges)
+    for (auto i = 0; i < subset.size() - 1; ++i)
     {
-        if (std::find(subset.begin(), subset.end(), crossedPair.first) != subset.end() &&
-            std::find(subset.begin(), subset.end(), crossedPair.second) != subset.end())
+        for (auto j = i + 1; j <= subset.size() - 1; j++)
         {
-            return true;
+            if((subset[i][0] <= subset[j][0] && subset[i][1] >= subset[j][1]) ||
+               (subset[i][0] >= subset[j][0] && subset[i][1] <= subset[j][1]))
+            {
+                return true;
+            }
         }
     }
 
@@ -46,38 +42,32 @@ int build(int westCities, int eastCities, const vector<Bridge> &bridges)
             }
         }
 
-        if(currentSubset.size() == 2)
+        if(!currentSubset.empty())
         {
-            if(bridgesCross(currentSubset))
+            if (subsetContainsCrossedBridges(currentSubset))
             {
-                crossedBridges.emplace_back(currentSubset[0], currentSubset[1]);
                 continue;
             }
-        }
 
-        if(subsetContainsCrossedBridges(crossedBridges, currentSubset))
-        {
-            continue;
-        }
-
-        auto sumOfTolls = 0;
-        vector<int> visitedCitiesWest(westCities, 0);
-        vector<int> visitedCitiesEast(eastCities, 0);
-        for (auto bridge : currentSubset)
-        {
-            if (visitedCitiesWest[bridge[0]] == 1 || visitedCitiesEast[bridge[1]] == 1)
+            auto sumOfTolls = 0;
+            vector<int> visitedCitiesWest(westCities, 0);
+            vector<int> visitedCitiesEast(eastCities, 0);
+            for (auto bridge : currentSubset)
             {
-                break;
+                if (visitedCitiesWest[bridge[0]] == 1 || visitedCitiesEast[bridge[1]] == 1)
+                {
+                    break;
+                }
+
+                visitedCitiesWest[bridge[0]] = 1;
+                visitedCitiesEast[bridge[1]] = 1;
+                sumOfTolls += bridge[2];
             }
 
-            visitedCitiesWest[bridge[0]] = 1;
-            visitedCitiesEast[bridge[1]] = 1;
-            sumOfTolls += bridge[2];
-        }
-
-        if(sumOfTolls > maxToll)
-        {
-            maxToll = sumOfTolls;
+            if (sumOfTolls > maxToll)
+            {
+                maxToll = sumOfTolls;
+            }
         }
     }
 

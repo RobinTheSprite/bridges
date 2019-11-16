@@ -3,12 +3,12 @@
 //
 
 #include <vector>
-#include <algorithm>
+#include "build.hpp"
 using std::vector;
 
 bool containsCrossedBridges(const vector<Bridge> &subset)
 {
-    for (auto i = 0; i < subset.size(); ++i)
+    for (auto i = 0ul; i < subset.size(); ++i)
     {
         for (auto j = i + 1; j < subset.size(); j++)
         {
@@ -28,10 +28,10 @@ int build(int westCities, int eastCities, const vector<Bridge> &bridges)
     auto maxToll = 0;
     vector<Bridge> currentSubset;
 
-    for (auto nthSubset = 0u; nthSubset < 1u << bridges.size(); ++nthSubset)
+    for (auto nthSubset = 0ul; nthSubset < 1u << bridges.size(); ++nthSubset)
     {
         currentSubset.clear();
-        for (auto i = 0u; i < bridges.size(); ++i)
+        for (auto i = 0ul; i < bridges.size(); ++i)
         {
             if((nthSubset & (1u << i)) == (1u << i))
             {

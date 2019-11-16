@@ -1,26 +1,29 @@
-// build_test.cpp
-// VERSION 2
+// build_test2.cpp
 // Glenn G. Chappell
-// 29 Sep 2015
-// Updated: 1 Oct 2015
+// 12 Nov 2015
 //
 // For CS 411/611 Fall 2015
 // Test program for function build
-// Used in Assignment 2, Exercise A
+// Large Problems Added
+// Used in Assignment 5, Exercise A
+//
+// Modified 11/14/18
+// Chris Hartman
+// For CS 411 Fall 2018
 
 // Includes for code to be tested
-#include "build.h"      // For function build
-#include "build.h"      // Double inclusion test
+#include "build.hpp"      // For function build
+#include "build.hpp"      // Double inclusion test
 
 // Includes for testing package & code common to all test programs
 #include <iostream>     // for std::cout, std::endl, std::cin
 #include <string>       // for std::string
 #include <stdexcept>    // for std::runtime_error
-#include <chrono>
 
 // Additional includes for this test program
 #include <vector>       // for std::vector
 
+#include <chrono>
 
 // ************************************************************************
 // Testing Package:
@@ -51,7 +54,7 @@ class Tester {
     // Post:
     //     numTests == 0, countPasses == 0, tolerance_ == abs(theTolerance)
     // Does not throw (No-Throw Guarantee)
-    explicit Tester(double theTolerance = 0.0000001)
+    Tester(double theTolerance = 0.0000001)
             :countTests_(0),
              countPasses_(0),
              tolerance_(theTolerance >= 0 ? theTolerance : -theTolerance)
@@ -961,6 +964,152 @@ void test_build_medium(Tester & t)
 }
 
 
+// test_build_large
+// Test suite for function build: large examples
+// Pre: None.
+// Post:
+//     Pass/fail status of tests have been registered with t.
+//     Appropriate messages have been printed to cout.
+// Does not throw (No-Throw Guarantee)
+void test_build_large(Tester & t)
+{
+    std::cout << "Test Suite: function build - large examples"
+              << std::endl;
+
+    std::vector<Brg> bs;               // Brg descriptions
+    const std::vector<Brg> & cbs(bs);  // Const ref to above
+    int w;                             // Number of west cities
+    int e;                             // Number of west cities
+    int ans;                           // Desired answer
+
+    // All bridges available #1
+    {
+        w = 60;
+        e = w;
+        bs.clear();
+        for (int i = 0; i < w; ++i)
+            for (int j = 0; j < e; ++j)
+                bs.push_back(Brg { i, j, 3 });
+        ans = w * 3;
+        test_build_single(t, w, e, cbs, ans,
+                          "All bridges available #1");
+    }
+
+    // All bridges available #2
+    {
+        w = 60;
+        e = w;
+        bs.clear();
+        for (int i = 0; i < w; ++i)
+            for (int j = 0; j < e; ++j)
+                bs.push_back(Brg { i, j, (i == j ? 3 : 5) });
+        ans = (w-1) * 5;
+        test_build_single(t, w, e, cbs, ans,
+                          "All bridges available #2");
+    }
+
+    // All bridges available #3
+    {
+        w = 60;
+        e = w;
+        bs.clear();
+        for (int i = w-1; i >= 0; --i)
+            for (int j = e-1; j >= 0; --j)
+                bs.push_back(Brg { i, j, (-1 <= i-j && i-j <= 1 ? 3 : 7) });
+        ans = (w-2) * 7;
+        test_build_single(t, w, e, cbs, ans,
+                          "All bridges available #3");
+    }
+
+    // One bridge crosses many #1
+    {
+        w = 3000;
+        e = w;
+        bs.clear();
+        for (int i = 0; i < w; ++i)
+            bs.push_back(Brg { i, i, 1 });
+        bs.push_back(Brg { 0, e-1, w+1 });
+        bs.push_back(Brg { w-1, 0, w+2 });
+
+        ans = w+2;
+        test_build_single(t, w, e, cbs, ans,
+                          "One bridge crosses many #1");
+    }
+
+    // One bridge crosses many #2
+    {
+        w = 3000;
+        e = w;
+        bs.clear();
+        for (int i = 0; i < w; ++i)
+            bs.push_back(Brg { i, i, 1 });
+        bs.push_back(Brg { 0, e-1, w-1 });
+        bs.push_back(Brg { w-1, 0, w-2 });
+
+        ans = w;
+        test_build_single(t, w, e, cbs, ans,
+                          "One bridge crosses many #2");
+    }
+
+    // Messy #1
+    {
+        w = 3000;
+        e = w;
+        bs.clear();
+        int a, b, c;
+
+        a = 0;
+        b = 0;
+        c = 0;
+        for (int i = 0; i < w; ++i)
+        {
+            a = (a+163) % w;
+            b = (b+571) % e;
+            c = (c+29) % 100;
+            bs.push_back(Brg { a, b, c });
+        }
+
+        ans = 2644;
+        test_build_single(t, w, e, cbs, ans,
+                          "Messy #1");
+    }
+
+    // Messy #2
+    {
+        w = 1800;
+        e = w;
+        bs.clear();
+        int a, b, c;
+
+        a = 0;
+        b = 0;
+        c = 0;
+        for (int i = 0; i < w; ++i)
+        {
+            a = (a+163) % w;
+            b = (b+571) % e;
+            c = (c+29) % 100;
+            bs.push_back(Brg { a, b, c });
+        }
+
+        a = 0;
+        b = 0;
+        c = 0;
+        for (int i = 0; i < w; ++i)
+        {
+            a = (a+379) % w;
+            b = (b+293) % e;
+            c = (c+83) % 100;
+            bs.push_back(Brg { a, b, c });
+        }
+
+        ans = 5738;
+        test_build_single(t, w, e, cbs, ans,
+                          "Messy #2");
+    }
+}
+
+
 // test_build
 // Test suite for function build
 // Uses other test-suite functions
@@ -976,6 +1125,7 @@ void test_build(Tester & t)
     test_build_tiny(t);
     test_build_small(t);
     test_build_medium(t);
+    test_build_large(t);
 }
 
 

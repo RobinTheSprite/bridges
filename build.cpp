@@ -4,45 +4,38 @@
 
 #include <vector>
 #include <algorithm>
-#include <numeric>
-#include "build.h"
+#include "build.hpp"
 using std::vector;
 
-bool containsCrossedBridges(const vector<Bridge> &subset)
+bool bridgesCross(const Bridge &a, const Bridge &b)
 {
-    if (subset.size() <= 1)
-    {
-        return false;
-    }
-
-    return subset[subset.size() - 2][0] >= subset.back()[0] || subset[subset.size() - 2][1] >= subset.back()[1];
-}
-
-int buildRecurse(const vector<Bridge> &bridges, vector<Bridge> &subset, int startIndex)
-{
-    auto maxToll = 0;
-    auto save = subset;
-
-    for (auto i = startIndex; i < bridges.size(); ++i)
-    {
-        auto toll = 0;
-        subset.push_back(bridges[i]);
-        if (!containsCrossedBridges(subset))
-        {
-            toll += bridges[i].back();
-            toll += buildRecurse(bridges, subset, i + 1);
-            maxToll = std::max(maxToll, toll);
-        }
-        subset = save;
-    }
-
-    return maxToll;
+    return a[0] == b[0] || a[1] >= b[1];
 }
 
 int build(int westCities, int eastCities, const vector<Bridge> &bridges)
 {
-    vector<Bridge> copy = bridges;
-    vector<Bridge> emptySubset{};
-    std::sort(copy.begin(), copy.end(), [](auto a, auto b) { return a[0] < b[0]; });
-    return buildRecurse(copy, emptySubset, 0);
+    vector<Bridge> copyOfBridges = bridges;
+    vector<int> maxTollAt(std::max(1ul, bridges.size()));
+    std::sort(copyOfBridges.begin(), copyOfBridges.end(), [](auto a, auto b) { return a[0] < b[0]; });
+
+    auto maxToll = 0;
+    if (!copyOfBridges.empty())
+    {
+        maxTollAt[0] = copyOfBridges[0][2];
+        maxToll = maxTollAt[0];
+        for (auto i = 1ul; i < copyOfBridges.size(); ++i)
+        {
+            maxTollAt[i] = copyOfBridges[i][2];
+            for (auto j = 0ul; j < i; ++j)
+            {
+                if (!bridgesCross(copyOfBridges[j], copyOfBridges[i]))
+                {
+                    maxTollAt[i] = std::max(maxTollAt[i], maxTollAt[j] + copyOfBridges[i][2]);
+                }
+            }
+            maxToll = std::max(maxToll, maxTollAt[i]);
+        }
+    }
+
+    return maxToll;
 }
